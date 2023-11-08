@@ -1,6 +1,6 @@
 apiCallButton.addEventListener('click', () => {
 
-    fetch('http://localhost:8000/')
+    fetch('/api/')
       
       .then(response => {
         
@@ -25,3 +25,4 @@ apiCallButton.addEventListener('click', () => {
       });
   
   });
+
