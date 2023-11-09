@@ -1,7 +1,13 @@
-step1: sudo apt-get update
-step2: sudo apt-get install nginx
-step3: sudo nano /etc/nginx/sites-enabled/default
-step4:
+## step1: 
+    sudo apt-get update
+
+## step2: 
+    sudo apt-get install nginx
+
+## step3: 
+    sudo nano /etc/nginx/sites-enabled/default
+
+## step4:
 
     add this changes to the default config file
 
@@ -19,7 +25,11 @@ step4:
 
         }
 
-step5: sudo systemctl enable nginx
-step6: sudo systemctl start nginx
-step7: cd /Node-Project
-step8: ./Start-Script.sh
+## step5: 
+    sudo systemctl enable nginx
+## step6: 
+    sudo systemctl start nginx
+## step7: 
+    cd /Node-Project
+## step8: 
+    ./Start-Script.sh
