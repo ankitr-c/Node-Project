@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 function check_processes()
 {
     local port_number
@@ -24,8 +25,7 @@ function check_processes()
         echo "### Required Permissions To Kill All Processes ###"
         read -p "Enter [Y] to agree or [Any Char] to exit the process: " ch
 
-        if [[ "$ch" == [Yy] ]]
-        then
+        if [[ "$ch" == [Yy] ]]; then
             echo "--- Permission Granted ---"
             echo $port_number
             PIDS=$(sudo lsof -ti :$port_number)
@@ -77,47 +77,17 @@ function start_app()
     sleep 1
     echo "*** $name Program Deployed Successfully  ***"
     #deployed sucessfully
-    echo -e "\n---------------------------------------------------------------------------\n"
 
 }
-
-is_package_installed() {
-  dpkg -l "$1" | grep -q "^ii"  # Check if the package is installed
-}
-
 function main()
 {
 
     echo "*** Deployment Script for Node Application Initiated ***"
     echo "----------------------------------------------------------------------------------"
 
-    packages=("python3-pip" "flask" "flask_cors" "nodejs" "nginx")
-
-    for package in "${packages[@]}"
-    do
-        if is_package_installed "$package"
-        then
-                echo "$package Is Already Installed."
-        else
-                echo "... Installing $package ..."
-                if [[ "$package" == "flask" || "$package" == "flask_cors" ]]
-                then
-                        pip install "$package"
-                else
-                        sudo apt-get install -y "$package"
-                fi
-
-                # sudo apt-get install -y "$package"
-        fi
-        echo -e "--------------------------------------------------------------------------------\n"
-    done
-
-   echo "*** All The Package Installation and Verification Completed ***"
-   echo
-
     #defining directory path.
-    #path="/home/ubuntu/Node-Project"
-    path="/home/ankitraut0987/Node-Project"
+    path="/home/ubuntu/Node-Project"
+
     sleep 1
 
     #deployment of backend
@@ -130,7 +100,7 @@ function main()
     # start_app $backend_port $backend_command "Backend"
     start_app $backend_port "Backend"
     sleep 1
-    echo -e "----------------------------------------------------------------------------\n"
+
     #deployment of frontend
     echo "*** Initiated Frontend Deployment ***"
     frontend_port=3000
@@ -141,10 +111,11 @@ function main()
     # start_app $frontend_port $frontend_command "Frontend"
     start_app $frontend_port "Frontend"
     sleep 1
-    echo "*******************************************************************************"
+
     #application deployed sucessfully
     echo "Your Project Is Up And Running"
-    echo "*******************************************************************************"
+
 }
 
 main
+
