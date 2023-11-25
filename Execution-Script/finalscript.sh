@@ -2,10 +2,10 @@
 
 # Author: Ankit Raut 
 # Description: 
-getVariables()
-{
-    echo "INFO: var1=$var1"
-}
+# getVariables()
+# {
+#     echo "INFO: var1=$var1"
+# }
 
 setVariables()
 {
@@ -28,8 +28,8 @@ function check_processes()
     port_number=$1
     #checking if the process already exists on given port number.
     echo "--- Checking For The Processes On Port No. $port_number ---"
-    process_list=($(sudo lsof -i :$port_number | awk '{print $2}'))
-    process_name=($(sudo lsof -i :$port_number | awk '{print $9}'))
+    process_list=($(sudo lsof -i:$port_number | awk '{print $2}'))
+    process_name=($(sudo lsof -i:$port_number | awk '{print $9}'))
     limit=${#process_list[@]}
 
     #if processes found
