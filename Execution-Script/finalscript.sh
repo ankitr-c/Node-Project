@@ -60,13 +60,14 @@ function check_processes()
                 echo "Killed Process with PID: $pid"
             done
             echo "--- All The Processes Terminated Successfully ---"
-
+            return 0
         else
             return 1
         fi
     else
         # no proceess running on given port
         echo "No Processes Found On Port No. $port_number"
+        return 0
     fi
 
 }
@@ -86,16 +87,20 @@ function start_app()
     if [[ "$name" == "Backend" ]]
     then
         echo i am into backend
-        nohup python3 app.py & 
+        nohup python3 app.py &
+        return 0 
     elif [[ "$name" == "Frontend"  ]]
     then
         echo i am into frontend
-        nohup node index.js & 
+        nohup node index.js &
+        return 0 
     else
         return 1
     fi
 }
 
+setVariables
+getVariables
 
 echo "*** Deployment Script Initiated ***"
 echo "----------------------------------------------------------------------------------"
