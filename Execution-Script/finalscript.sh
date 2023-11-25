@@ -2,10 +2,13 @@
 
 # Author: Ankit Raut 
 # Description: 
-# getVariables()
-# {
-#     echo "INFO: var1=$var1"
-# }
+getVariables()
+{
+    echo "Path:$path"
+    echo "Nginx Path:$nginx_path"
+    echo "Backend Port:$backend_port"
+    echo "Frontend Port:$frontend_port"
+}
 
 setVariables()
 {
