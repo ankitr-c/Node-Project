@@ -10,8 +10,8 @@ getVariables()
 setVariables()
 {
     #defining directory path.
-    path="/home/ubuntu/Node-Project"
-    #path="/home/ankitraut0987/Node-Project"
+    # path="/home/ubuntu/Node-Project"
+    path="/home/ankitraut0987/Node-Project"
     
     #defining nginx path
     nginx_path="/etc/nginx/sites-enabled"
