@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Author: Ankit Raut 
+
 # Description: 
+
 getVariables()
 {
     echo "Path:$path"
@@ -25,51 +27,15 @@ setVariables()
 
 }
 
-function check_processes()
-{
+function terminate_processes(){
     local port_number
     port_number=$1
-    #checking if the process already exists on given port number.
-    echo "--- Checking For The Processes On Port No. $port_number ---"
-    process_list=($(sudo lsof -i:$port_number | awk '{print $2}'))
-    process_name=($(sudo lsof -i:$port_number | awk '{print $9}'))
-    limit=${#process_list[@]}
-
-    #if processes found
-    if (( $limit > 1 ))
-    then 
-        echo "Following Are The Processes On Port No. $port_number::"
-        for((idx=1; idx<limit; idx++))
-        do
-            echo "-PID: ${process_list[$idx]} | P_Name: ${process_name[$idx]}"
-        done
-        # requesting permission from user to kill all the permissions
-        echo "### Required Permissions To Kill All Processes ###"
-        read -p "Enter [Y] to agree or [Any Char] to exit the process: " ch
-
-        if [[ "$ch" == [Yy] ]]
-        then
-            echo "--- Permission Granted ---"
-            echo $port_number
-            PIDS=$(sudo lsof -ti :$port_number)
-            echo "${PIDS[@]}"
-            #killing all the processes on given port number
-            for pid in "${PIDS[@]}"
-            do
-                sudo kill -9 $pid
-                echo "Killed Process with PID: $pid"
-            done
-            echo "--- All The Processes Terminated Successfully ---"
-            return 0
-        else
-            return 1
-        fi
-    else
-        # no proceess running on given port
-        echo "No Processes Found On Port No. $port_number"
-        return 0
-    fi
-
+    PIDS=$(sudo lsof -ti :$port_number)
+    for pid in "${PIDS[@]}"
+    do
+        sudo kill -9 $pid
+    done
+    return 0
 }
 
 function start_app()
@@ -77,21 +43,18 @@ function start_app()
     local name
     port_number=$1
     name=$2
-    echo "$port_number $name"
     # final deployment started
-    status=$(check_processes "$port_number")
-    if (( $status==1 ))
+    status=$(delete_processes "$port_number")
+    if (( $status!=0 ))
     then
         return 1
     fi
     if [[ "$name" == "Backend" ]]
     then
-        echo i am into backend
         nohup python3 app.py &
         return 0 
     elif [[ "$name" == "Frontend"  ]]
     then
-        echo i am into frontend
         nohup node index.js &
         return 0 
     else
