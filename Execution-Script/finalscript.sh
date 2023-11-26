@@ -1,17 +1,22 @@
 #!/bin/bash
 
 # Author: Ankit Raut 
+
 # Description: 
+
 getVariables()
 {
-    echo "INFO: var1=$var1"
+    echo "Path:$path"
+    echo "Nginx Path:$nginx_path"
+    echo "Backend Port:$backend_port"
+    echo "Frontend Port:$frontend_port"
 }
 
 setVariables()
 {
     #defining directory path.
-    path="/home/ubuntu/Node-Project"
-    #path="/home/ankitraut0987/Node-Project"
+    # path="/home/ubuntu/Node-Project"
+    path="/home/ankitraut0987/Node-Project"
     
     #defining nginx path
     nginx_path="/etc/nginx/sites-enabled"
@@ -22,50 +27,15 @@ setVariables()
 
 }
 
-function check_processes()
-{
+function terminate_processes(){
     local port_number
     port_number=$1
-    #checking if the process already exists on given port number.
-    echo "--- Checking For The Processes On Port No. $port_number ---"
-    process_list=($(sudo lsof -i :$port_number | awk '{print $2}'))
-    process_name=($(sudo lsof -i :$port_number | awk '{print $9}'))
-    limit=${#process_list[@]}
-
-    #if processes found
-    if (( $limit > 1 ))
-    then 
-        echo "Following Are The Processes On Port No. $port_number::"
-        for((idx=1; idx<limit; idx++))
-        do
-            echo "-PID: ${process_list[$idx]} | P_Name: ${process_name[$idx]}"
-        done
-        # requesting permission from user to kill all the permissions
-        echo "### Required Permissions To Kill All Processes ###"
-        read -p "Enter [Y] to agree or [Any Char] to exit the process: " ch
-
-        if [[ "$ch" == [Yy] ]]
-        then
-            echo "--- Permission Granted ---"
-            echo $port_number
-            PIDS=$(sudo lsof -ti :$port_number)
-            echo "${PIDS[@]}"
-            #killing all the processes on given port number
-            for pid in "${PIDS[@]}"
-            do
-                sudo kill -9 $pid
-                echo "Killed Process with PID: $pid"
-            done
-            echo "--- All The Processes Terminated Successfully ---"
-
-        else
-            return 1
-        fi
-    else
-        # no proceess running on given port
-        echo "No Processes Found On Port No. $port_number"
-    fi
-
+    PIDS=$(sudo lsof -ti :$port_number)
+    for pid in "${PIDS[@]}"
+    do
+        sudo kill -9 $pid
+    done
+    echo 0
 }
 
 function start_app()
@@ -73,26 +43,27 @@ function start_app()
     local name
     port_number=$1
     name=$2
-    echo "$port_number $name"
     # final deployment started
-    status=$(check_processes "$port_number")
-    if (( $status==1 ))
+    status=$(terminate_processes "$port_number")
+    if (( $status!=0 ))
     then
-        return 1
+        echo 1
     fi
     if [[ "$name" == "Backend" ]]
     then
-        echo i am into backend
-        nohup python3 app.py & 
+        nohup python3 app.py &
+        echo 0 
     elif [[ "$name" == "Frontend"  ]]
     then
-        echo i am into frontend
-        nohup node index.js & 
+        nohup node index.js &
+        echo 0 
     else
-        return 1
+        echo 1
     fi
 }
 
+setVariables
+getVariables
 
 echo "*** Deployment Script Initiated ***"
 echo "----------------------------------------------------------------------------------"
@@ -102,16 +73,16 @@ echo "--------------------------------------------------------------------------
 sudo apt-get install nginx -y || { echo "Failed to Install Nginx Server"; exit 1; }
 
 #Configuring Nginx Server:
-sudo rm "$nginx_path/default" 2>/dev/null || echo "Default Config File Not Found"
+sudo rm "$nginx_path/default" || echo "Default Config File Not Found"
 cd "$path/Execution-Script/"
 sudo cp "default" "$nginx_path/"
 sudo systemctl restart nginx
 
 #Installing Node:
-sudo apt-get install nodejs -y 2>/dev/null || echo "Failed to Install NodeJs"
+sudo apt-get install nodejs -y || echo "Failed to Install NodeJs"
 
 #Installing Python3 PIP:
-sudo apt-get install python3-pip -y 2>/dev/null || echo "Failed to Install Python3 PIP"
+sudo apt-get install python3-pip -y || echo "Failed to Install Python3 PIP"
 
 #installing all the required Python Packages:
 pip install -r requirements.txt
