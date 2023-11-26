@@ -35,7 +35,7 @@ function terminate_processes(){
     do
         sudo kill -9 $pid
     done
-    return 0
+    echo 0
 }
 
 function start_app()
@@ -44,21 +44,21 @@ function start_app()
     port_number=$1
     name=$2
     # final deployment started
-    status=$(delete_processes "$port_number")
+    status=$(terminate_processes "$port_number")
     if (( $status!=0 ))
     then
-        return 1
+        echo 1
     fi
     if [[ "$name" == "Backend" ]]
     then
         nohup python3 app.py &
-        return 0 
+        echo 0 
     elif [[ "$name" == "Frontend"  ]]
     then
         nohup node index.js &
-        return 0 
+        echo 0 
     else
-        return 1
+        echo 1
     fi
 }
 
@@ -73,16 +73,16 @@ echo "--------------------------------------------------------------------------
 sudo apt-get install nginx -y || { echo "Failed to Install Nginx Server"; exit 1; }
 
 #Configuring Nginx Server:
-sudo rm "$nginx_path/default" 2>/dev/null || echo "Default Config File Not Found"
+sudo rm "$nginx_path/default" || echo "Default Config File Not Found"
 cd "$path/Execution-Script/"
 sudo cp "default" "$nginx_path/"
 sudo systemctl restart nginx
 
 #Installing Node:
-sudo apt-get install nodejs -y 2>/dev/null || echo "Failed to Install NodeJs"
+sudo apt-get install nodejs -y || echo "Failed to Install NodeJs"
 
 #Installing Python3 PIP:
-sudo apt-get install python3-pip -y 2>/dev/null || echo "Failed to Install Python3 PIP"
+sudo apt-get install python3-pip -y || echo "Failed to Install Python3 PIP"
 
 #installing all the required Python Packages:
 pip install -r requirements.txt
