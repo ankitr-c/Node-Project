@@ -31,10 +31,15 @@ function terminate_processes(){
     local port_number
     port_number=$1
     PIDS=$(sudo lsof -ti :$port_number)
-    for pid in "${PIDS[@]}"
-    do
-        sudo kill -9 $pid
-    done
+    limit=${#PIDS[@]}
+    #if processes found
+    if (( $limit > 1 ))
+    then 
+        for pid in "${PIDS[@]}"
+        do
+            sudo kill -9 $pid >/dev/null
+        done
+    fi
     echo 0
 }
 
@@ -66,7 +71,7 @@ echo "--------------------------------------------------------------------------
 
 #Installing Nginx Server
 # sudo apt-get install nginx -y 2>/dev/null || echo "Failed to Install Nginx Server"
-sudo apt-get install nginx -y || { echo "Failed to Install Nginx Server"; exit 1; }
+sudo apt-get install nginx -y >/dev/null || { echo "Failed to Install Nginx Server"; exit 1; }
 
 #Configuring Nginx Server:
 sudo rm "$nginx_path/default" || echo "Default Config File Not Found"
@@ -75,10 +80,10 @@ sudo cp "default" "$nginx_path/"
 sudo systemctl restart nginx
 
 #Installing Node:
-sudo apt-get install nodejs -y || echo "Failed to Install NodeJs"
+sudo apt-get install nodejs -y >/dev/null || echo "Failed to Install NodeJs"
 
 #Installing Python3 PIP:
-sudo apt-get install python3-pip -y || echo "Failed to Install Python3 PIP"
+sudo apt-get install python3-pip -y >/dev/null || echo "Failed to Install Python3 PIP"
 
 #installing all the required Python Packages:
 pip install -r requirements.txt
